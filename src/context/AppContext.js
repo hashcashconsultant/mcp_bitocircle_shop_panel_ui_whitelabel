@@ -1,6 +1,10 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback } from 'react';
+import { installServiceAuth } from '@/lib/serviceAuth';
+
+// Send the member's sign-in with every MonetizeService / BrokerAdminApi call.
+installServiceAuth();
 import { mockProducts, mockOrders, mockCollections, mockContentItems } from '@/data/mockData';
 import { signInUrl } from '@/config/whitelabel';
 
