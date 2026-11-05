@@ -19,8 +19,6 @@ export const WHITELABEL = {
   brandName: 'Circle',
   productName: 'Circle Creator Shop Panel',
   description: 'Circle Creator Shop Panel - Merchandise Management Dashboard',
-  // Shown in the Support window and used for its "Email Support" link. Replace with your own address.
-  supportEmail: 'support@circle.paybito.com',
 
   // --- Your community app ---------------------------------------------------
   // The domain your community app runs on. The Shop Panel is served from the same domain.

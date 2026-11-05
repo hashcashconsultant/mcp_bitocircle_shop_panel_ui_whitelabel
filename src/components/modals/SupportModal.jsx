@@ -32,7 +32,7 @@ const supportOptions = [
   {
     icon: EmailIcon,
     title: '✉️ Email Support',
-    description: WHITELABEL.supportEmail,
+    description: 'contactus@bitocircle.com',
   },
   // {
   //   icon: PhoneIcon,
@@ -63,7 +63,8 @@ export default function SupportModal() {
   }
 
   if (option.title.includes('Email')) {
-    window.location.href = `mailto:${WHITELABEL.supportEmail}`;
+    // Same support mailbox for every site; the subject names the site the member writes from.
+    window.location.href = `mailto:support@BitoCircle.com?subject=${encodeURIComponent(`${WHITELABEL.brandName} shop support`)}`;
   }
 
   setSupportModalOpen(false);
