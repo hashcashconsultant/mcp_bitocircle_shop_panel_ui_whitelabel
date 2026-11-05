@@ -19,6 +19,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useApp } from '@/context/AppContext';
 import { restrictedProducts } from '@/data/mockData';
+import { WHITELABEL } from '@/config/whitelabel';
 
 export function ShopReviewModal() {
   const { shopReviewModalOpen, setShopReviewModalOpen, showToast } = useApp();
@@ -104,7 +105,7 @@ export function RestrictedProductsModal() {
           }}
         >
           <Typography variant="body2" sx={{ color: '#ef4444' }}>
-            ⚠️ The following products are prohibited on BitoCircle shops:
+            ⚠️ The following products are prohibited on {WHITELABEL.brandName} shops:
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>

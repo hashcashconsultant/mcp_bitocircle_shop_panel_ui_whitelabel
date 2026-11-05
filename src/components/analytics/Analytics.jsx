@@ -60,15 +60,16 @@ export default function Analytics() {
   const [error, setError] = useState(null);
   const [analyticsData, setAnalyticsData] = useState(null);
   const [dateRange, setDateRange] = useState(getDefaultDateRange());
-  const [shopOwnerId, setShopOwnerId] = useState('3357'); // Default value
+  const [shopOwnerId, setShopOwnerId] = useState(''); // Empty until read from the signed-in session
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setShopOwnerId(localStorage.getItem('shopOwnerId') || '3357');
+      setShopOwnerId(localStorage.getItem('shopOwnerId') || '');
     }
   }, []);
 
   const fetchAnalyticsData = useCallback(async () => {
+    if (!shopOwnerId) return;
     setLoading(true);
     setError(null);
 

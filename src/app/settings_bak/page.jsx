@@ -66,7 +66,7 @@ export default function Settings() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setShopOwnerId(localStorage.getItem('shopOwnerId') || '3357');
+      setShopOwnerId(localStorage.getItem('shopOwnerId') || '');
     }
   }, []);
 
@@ -831,6 +831,7 @@ export default function Settings() {
         setInitialLoading(false);
       }
     };
+    if (shopOwnerId === '0' || !shopOwnerId) return;
     fetchSettings();
   }, [shopOwnerId]);
 

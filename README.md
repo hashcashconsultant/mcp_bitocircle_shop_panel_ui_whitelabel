@@ -1,3 +1,25 @@
+# White-label
+
+This is the white-label copy of the Creator Shop Panel (sample brand **Circle**). It is served at
+`<your domain>/merchandise` (for example https://circle.paybito.com/merchandise), next to your
+white-label community app on the SAME domain.
+
+- **Sign-in is shared.** The panel reads the community app's sign-in from localStorage on that domain
+  (`access_token_us`, `shopOwnerId`, `uuid`, `userId`, `financeHubUuid`, `brokerId`). When no shop or
+  user id is found, the visitor is sent to the community sign-in page (`/login`); the panel never falls
+  back to another user's id.
+- **Brand it in one place:** edit `src/config/whitelabel.js` (brand name, product name, description,
+  support email, community links, sign-in path, logo, font, main colours).
+- **Replace the images** in `public/img/`: `logo.png` (sidebar logo) and `favicon-96x96.png` (browser icon).
+- **Do not change the service URLs** (MonetizeService and BrokerAdminApi on institutional-bo.paybito.com,
+  the PayBito countries list and the PayBito support portal). The backend recognises your site from the
+  browser's Origin, so your shop data stays on your own platform.
+- **Deploy:** a normal Next.js build (`npm ci && npm run build`, then `npm start`, port 3055) with
+  `basePath: '/merchandise'` and `trailingSlash: true` (see `next.config.js`). Route `/merchandise`
+  on your domain to this app.
+
+---
+
 # BitoCircle Creator Shop Panel
 
 A comprehensive merchandise management dashboard for BitoCircle creators. Built with Next.js 14 and Material UI.

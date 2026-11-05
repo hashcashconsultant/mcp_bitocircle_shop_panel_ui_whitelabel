@@ -16,6 +16,7 @@ import {
   RestrictedProductsModal,
 } from '@/components/modals';
 import theme from '@/theme/theme';
+import { WHITELABEL } from '@/config/whitelabel';
 
 // Routes that should NOT show the animated background
 // Use exact matching to avoid conflicts
@@ -77,8 +78,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>BitoCircle Creator Shop Panel</title>
-        <meta name="description" content="BitoCircle Creator Shop Panel - Merchandise Management Dashboard" />
+        <title>{WHITELABEL.productName}</title>
+        <meta name="description" content={WHITELABEL.description} />
         <link rel="icon" href="/merchandise/img/favicon-96x96.png" />
       </head>
       <body>

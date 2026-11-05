@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useCallback } from 'react';
 import { mockProducts, mockOrders, mockCollections, mockContentItems } from '@/data/mockData';
+import { signInUrl } from '@/config/whitelabel';
 
 const AppContext = createContext(null);
 
@@ -89,8 +90,12 @@ export function AppProvider({ children }) {
   }, []);
 
   const openShopPreview = useCallback(() => {
-    const shopCreatorId = localStorage.getItem('shopOwnerId') || '3357';
-    const userId = localStorage.getItem('userId') || '4';
+    const shopCreatorId = localStorage.getItem('shopOwnerId') || '';
+    const userId = localStorage.getItem('userId') || '';
+    if (!shopCreatorId) {
+      window.location.href = signInUrl();
+      return;
+    }
     const shopUrl = `/merchandise/shop/?shopCreatorId=${shopCreatorId}&userId=${shopCreatorId}&viewOnly=true`;
     window.location.href = shopUrl;
   }, []);

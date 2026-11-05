@@ -83,6 +83,7 @@ import ReviewsDialog from '../../components/reviews/ReviewsDialog';
 import ReviewImageViewer from '../../components/reviews/ReviewImageViewer';
 
 import ShopHeader from '../../components/layout/ShopHeader';
+import { signInUrl } from '@/config/whitelabel';
 
 const API_BASE_URL = 'https://institutional-bo.paybito.com:8443/MonetizeService';
 const COUNTRIES_API_URL = 'https://accounts.paybito.com/api/home//getExchangeCountries/PAYB18022021121103';
@@ -327,7 +328,12 @@ function ProductDetail() {
   const productId = searchParams.get('productId');
   const shopCreatorId = searchParams.get('shopCreatorId') || searchParams.get('creatorId');
   const viewOnly = searchParams.get('viewOnly') === 'true';
-  const currentUserId = searchParams.get('userId') || '4';
+  const currentUserId = searchParams.get('userId') || '';
+
+  // No signed-in user: send the visitor to the community sign-in page (never act as another user).
+  useEffect(() => {
+    if (!currentUserId && !viewOnly) window.location.replace(signInUrl());
+  }, [currentUserId, viewOnly]);
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -518,7 +524,7 @@ function ProductDetail() {
 
   // Fetch cart
   const fetchCart = useCallback(async () => {
-    if (viewOnly) return;
+    if (viewOnly || !currentUserId) return;
     try {
       const response = await fetch(`${API_BASE_URL}/cart/${currentUserId}`, {
         method: 'GET', headers: { 'Content-Type': 'application/json' },
@@ -594,6 +600,7 @@ function ProductDetail() {
 
   // Fetch saved addresses
   const fetchAddresses = useCallback(async () => {
+    if (!currentUserId) return;
     setAddressesLoading(true);
     try {
       const response = await fetch(

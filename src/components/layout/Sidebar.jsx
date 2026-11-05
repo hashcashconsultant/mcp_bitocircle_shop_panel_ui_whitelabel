@@ -18,7 +18,7 @@ import MovieIcon from '@mui/icons-material/Movie';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useApp } from '@/context/AppContext';
-import logoImage from '../../../public/img/bitoHubTextLogo.png'
+import { WHITELABEL } from '@/config/whitelabel';
 
 const drawerWidth = 250;
 
@@ -54,8 +54,8 @@ export default function Sidebar() {
       {/* Logo Section */}
       <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img
-          src="/merchandise/img/bitoHubTextLogo.png"
-          alt="BitoHub"
+          src={WHITELABEL.logo}
+          alt={WHITELABEL.brandName}
           style={{
             height: '40px',
             width: 'auto',

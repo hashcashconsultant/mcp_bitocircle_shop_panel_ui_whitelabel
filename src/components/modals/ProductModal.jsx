@@ -36,6 +36,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import { WHITELABEL } from '@/config/whitelabel';
 
 // ─────────────────────────────────────────────────────
 // Constants
@@ -707,7 +708,7 @@ export default function ProductModal({ open, onClose, onSave, product, shopOwner
         </Box>
         <Box sx={{ p: 1.5, bgcolor: 'rgba(30,64,175,0.1)', borderRadius: 2, mb: 3 }}>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            💰 All payments in BitoCircle shops are processed in BitoDollars (B$).
+            💰 All payments in {WHITELABEL.brandName} shops are processed in BitoDollars (B$).
           </Typography>
         </Box>
 

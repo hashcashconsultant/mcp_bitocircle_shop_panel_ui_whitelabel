@@ -27,6 +27,7 @@ import RateReviewIcon from '@mui/icons-material/RateReview';
 import { StatusChip } from '@/components/common';
 import { useApp } from '@/context/AppContext';
 import axios from 'axios';
+import { signInUrl } from '@/config/whitelabel';
 
 const drawerWidth = 250;
 const API_BASE_URL = 'https://institutional-bo.paybito.com:8443/MonetizeService';
@@ -34,7 +35,7 @@ const API_BASE_URL = 'https://institutional-bo.paybito.com:8443/MonetizeService'
 export default function TopBar() {
   const { handleDrawerToggle, openShopPreview, showToast } = useApp();
 
-  const [shopOwnerId, setShopOwnerId] = useState('3357');
+  const [shopOwnerId, setShopOwnerId] = useState('');
   const [isShopVerified, setIsShopVerified] = useState(false);
   const [verificationLoading, setVerificationLoading] = useState(true);
 
@@ -49,7 +50,13 @@ export default function TopBar() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setShopOwnerId(localStorage.getItem('shopOwnerId') || '3357');
+      const storedId = localStorage.getItem('shopOwnerId') || '';
+      if (!storedId) {
+        // Not signed in (or no shop): open the community sign-in page instead of using someone else's id.
+        window.location.replace(signInUrl());
+        return;
+      }
+      setShopOwnerId(storedId);
     }
   }, []);
 

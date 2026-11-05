@@ -16,6 +16,7 @@ import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import { useApp } from '@/context/AppContext';
+import { WHITELABEL } from '@/config/whitelabel';
 
 const supportOptions = [
   // {
@@ -31,7 +32,7 @@ const supportOptions = [
   {
     icon: EmailIcon,
     title: '✉️ Email Support',
-    description: 'contactus@bitocircle.com',
+    description: WHITELABEL.supportEmail,
   },
   // {
   //   icon: PhoneIcon,
@@ -62,7 +63,7 @@ export default function SupportModal() {
   }
 
   if (option.title.includes('Email')) {
-    window.location.href = 'mailto:support@BitoCircle.com';
+    window.location.href = `mailto:${WHITELABEL.supportEmail}`;
   }
 
   setSupportModalOpen(false);

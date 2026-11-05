@@ -34,6 +34,7 @@ import MessageIcon from '@mui/icons-material/Message';
 import { StatusChip, Avatar, FilterChips } from '@/components/common';
 import { useApp } from '@/context/AppContext';
 import OrderDetailModal from '@/components/modals/OrderDetailModal';
+import { WHITELABEL, communityUrl } from '@/config/whitelabel';
 
 const API_BASE_URL = 'https://institutional-bo.paybito.com:8443/MonetizeService';
 
@@ -133,7 +134,7 @@ export default function Orders() {
   const [searchQuery, setSearchQuery] = useState('');
   const [orderFilter, setOrderFilter] = useState('ALL');
   const [dateRange, setDateRange] = useState('30DAYS');
-  const [shopOwnerId, setShopOwnerId] = useState('3357');
+  const [shopOwnerId, setShopOwnerId] = useState('');
 
   // Initialize shopOwnerId on client side only
   useEffect(() => {
@@ -179,11 +180,12 @@ export default function Orders() {
       return;
     }
     
-    window.location.href = `https://bitocircle.com/messages?userId=${buyerId}`;
+    window.location.href = `${communityUrl(WHITELABEL.communityLinks.messages)}?userId=${buyerId}`;
   };
 
   // Fetch orders
   const fetchOrders = useCallback(async () => {
+    if (!shopOwnerId) return;
     setLoading(true);
     try {
       const { dateFrom, dateTo } = getDateRange(dateRange);

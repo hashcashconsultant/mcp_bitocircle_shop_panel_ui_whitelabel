@@ -538,7 +538,7 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
   const [todayMetrics, setTodayMetrics] = useState([]);
-  const [shopOwnerId, setShopOwnerId] = useState('0');
+  const [shopOwnerId, setShopOwnerId] = useState('');
   const [shopDetails, setShopDetails] = useState(null);
 const [shopDetailsLoading, setShopDetailsLoading] = useState(true);
 
@@ -553,7 +553,7 @@ const [shopDetailsLoading, setShopDetailsLoading] = useState(true);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setShopOwnerId(localStorage.getItem('shopOwnerId') || '3357');
+      setShopOwnerId(localStorage.getItem('shopOwnerId') || '');
     }
   }, []);
 
@@ -658,6 +658,8 @@ const [shopDetailsLoading, setShopDetailsLoading] = useState(true);
       }
     };
 
+    if (!shopOwnerId) return;
+
     setTimeout(() => {
     fetchDashboardData();
       
@@ -668,7 +670,7 @@ const [shopDetailsLoading, setShopDetailsLoading] = useState(true);
   // Fetch products when collection editor opens
   useEffect(() => {
     const fetchProducts = async () => {
-      if (collectionEditorOpen) {
+      if (collectionEditorOpen && shopOwnerId) {
         try {
           setProductsLoading(true);
           const params = new URLSearchParams({

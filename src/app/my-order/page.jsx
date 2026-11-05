@@ -79,6 +79,7 @@ import RateReviewIcon from '@mui/icons-material/RateReview';
 
 // Import the review dialog component
 import OrderReviewDialog from '../../components/reviews/OrderReviewDialog';
+import { signInUrl } from '@/config/whitelabel';
 
 const API_BASE_URL = 'https://institutional-bo.paybito.com:8443/MonetizeService';
 
@@ -212,7 +213,12 @@ function OrdersList() {
   const searchParams = useSearchParams();
   
   // Get URL params
-  const currentUserId = searchParams.get('userId') || localStorage.getItem('userId') || '4';
+  const currentUserId = searchParams.get('userId') || localStorage.getItem('userId') || '';
+
+  // No signed-in user: send the visitor to the community sign-in page (never act as another user).
+  useEffect(() => {
+    if (!currentUserId) window.location.replace(signInUrl());
+  }, [currentUserId]);
   const shopCreatorId = searchParams.get('shopCreatorId');
 
   // State
@@ -273,6 +279,7 @@ function OrdersList() {
 
   // Fetch orders from API
   const fetchOrders = useCallback(async (showRefresh = false) => {
+    if (!currentUserId) return;
     if (showRefresh) {
       setRefreshing(true);
     } else {

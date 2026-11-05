@@ -1,20 +1,13 @@
 'use client';
 
 import { createTheme } from '@mui/material/styles';
+import { WHITELABEL } from '@/config/whitelabel';
 
 const theme = createTheme({
   palette: {
     mode: 'dark',
-    primary: {
-      main: '#1e40af',
-      light: '#3b82f6',
-      dark: '#1e3a8a',
-    },
-    secondary: {
-      main: '#8b5cf6',
-      light: '#a78bfa',
-      dark: '#7c3aed',
-    },
+    primary: { ...WHITELABEL.colors.primary },
+    secondary: { ...WHITELABEL.colors.secondary },
     success: {
       main: '#22c55e',
       light: '#4ade80',
@@ -35,10 +28,7 @@ const theme = createTheme({
       light: '#93c5fd',
       dark: '#3b82f6',
     },
-    background: {
-      default: '#0a0f1c',
-      paper: 'rgba(255, 255, 255, 0.03)',
-    },
+    background: { ...WHITELABEL.colors.background },
     text: {
       primary: '#ffffff',
       secondary: 'rgba(255, 255, 255, 0.7)',
@@ -47,7 +37,7 @@ const theme = createTheme({
     divider: 'rgba(255, 255, 255, 0.1)',
   },
   typography: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif',
+    fontFamily: WHITELABEL.fonts.body,
     h1: {
       fontSize: '2rem',
       fontWeight: 700,

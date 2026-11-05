@@ -30,6 +30,7 @@ import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import { StatusChip, Avatar } from '@/components/common';
 import { useApp } from '@/context/AppContext';
+import { WHITELABEL, communityUrl } from '@/config/whitelabel';
 
 const API_BASE_URL = 'https://institutional-bo.paybito.com:8443/MonetizeService';
 
@@ -201,7 +202,7 @@ export default function OrderDetailModal({ open, onClose, order, refreshOrders }
       return;
     }
     onClose();
-    window.location.href = `https://bitocircle.com/messages?userId=${buyerId}`;
+    window.location.href = `${communityUrl(WHITELABEL.communityLinks.messages)}?userId=${buyerId}`;
   };
 
   const getEffectiveCarrier = () => {
@@ -379,7 +380,12 @@ export default function OrderDetailModal({ open, onClose, order, refreshOrders }
     setUpdating(true);
     try {
       // Get required parameters
-      const shopOwnerId = localStorage.getItem('shopOwnerId') || '3357';
+      const shopOwnerId = localStorage.getItem('shopOwnerId') || '';
+      if (!shopOwnerId) {
+        showToast('Please sign in to your shop to refund this order', 'error');
+        setUpdating(false);
+        return;
+      }
       const buyerId = orderData?.buyerId || order?.buyer?.id;
       const orderId = (orderData?.orderId || order?.id).toString();
 

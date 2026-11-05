@@ -828,11 +828,11 @@ export default function Collections() {
   const [activeId, setActiveId] = useState(null);
 
   // Shop Owner ID - This should come from your auth context or app state
-  const [shopOwnerId, setShopOwnerId] = useState('3357');
+  const [shopOwnerId, setShopOwnerId] = useState('');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setShopOwnerId(localStorage.getItem('shopOwnerId') || '3357');
+      setShopOwnerId(localStorage.getItem('shopOwnerId') || '');
     }
   }, []);
 
@@ -885,6 +885,7 @@ export default function Collections() {
 
   // Fetch Collections
   const fetchCollections = useCallback(async () => {
+    if (!shopOwnerId) return;
     try {
       setIsLoading(true);
       const response = await fetch(
@@ -907,6 +908,7 @@ export default function Collections() {
 
   // Fetch Products
   const fetchProducts = useCallback(async () => {
+    if (!shopOwnerId) return;
     try {
       setIsProductsLoading(true);
       const response = await fetch(
