@@ -25,10 +25,16 @@ const readStorage = (key) => {
   }
 };
 
+// The sign-in cookie is the member's current sign-in; browser storage can still hold an older, revoked token.
+const cookieToken = () => readCookie('paybito_launch_platform_token');
+
 const signIn = () => ({
-  token: readCookie('paybito_launch_platform_token') || readStorage('access_token_us'),
+  token: cookieToken() || readStorage('access_token_us'),
   uuid: readCookie('paybito_launch_platform_uuid') || readStorage('uuid'),
 });
+
+// Replace the call's token when the current sign-in differs from it (or it has none).
+const shouldReplace = (current) => !usable(current) || (!!cookieToken() && current.trim().replace(/^bearer\s+/i, '') !== cookieToken());
 
 // An existing header counts only when it carries a real token ("bearer null" is sent when storage is empty).
 const usable = (value) => !!value && !/^bearer\s*(null|undefined)?\s*$/i.test(String(value).trim());
@@ -47,7 +53,7 @@ export function installServiceAuth() {
     const { token, uuid } = signIn();
     config.headers = config.headers || {};
     const current = config.headers.Authorization || config.headers.authorization;
-    if (token && !usable(current)) {
+    if (token && shouldReplace(current)) {
       delete config.headers.authorization;
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -61,7 +67,7 @@ export function installServiceAuth() {
     if (!isServiceUrl(url)) return originalFetch(input, init);
     const { token, uuid } = signIn();
     const headers = new Headers(init.headers || (typeof input !== 'string' && input.headers) || {});
-    if (token && !usable(headers.get('Authorization'))) headers.set('Authorization', `Bearer ${token}`);
+    if (token && shouldReplace(headers.get('Authorization'))) headers.set('Authorization', `Bearer ${token}`);
     if (uuid && !headers.has('uuid')) headers.set('uuid', uuid);
     return originalFetch(input, { ...init, headers });
   };

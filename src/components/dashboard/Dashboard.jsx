@@ -618,6 +618,8 @@ const [shopDetailsLoading, setShopDetailsLoading] = useState(true);
   }, [shopOwnerId]);
 
   useEffect(() => {
+    // Wait for the signed-in member's shop id; never ask for shop 0.
+    if (!shopOwnerId) return;
     const fetchDashboardData = async () => {
       try {
         setLoading(true);

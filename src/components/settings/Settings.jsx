@@ -62,7 +62,9 @@ const BROKER_ADMIN_API = 'https://institutional-bo.paybito.com:8443/BrokerAdminA
 export default function Settings() {
   const { settings, updateSettings, setSupportModalOpen } = useApp();
 
-  const [shopOwnerId, setShopOwnerId] = useState('0');
+  const [shopOwnerId, setShopOwnerId] = useState('');
+  // True once the shop's settings exist on this site; shipping templates belong to a saved shop.
+  const [shopSaved, setShopSaved] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -545,6 +547,14 @@ export default function Settings() {
       setSnackbar({ open: true, message: 'Please add at least one shipping zone', severity: 'error' });
       return;
     }
+    if (!shopSaved) {
+      setSnackbar({
+        open: true,
+        message: 'Save your Shop Information first (Shop Name, Description, Contact Email), then create the shipping template.',
+        severity: 'warning',
+      });
+      return;
+    }
 
     setIsSavingTemplate(true);
     try {
@@ -768,6 +778,7 @@ export default function Settings() {
             externalCheckoutUrl: data.externalCheckoutUrl || '',
             heroBannerUrl: data.heroBannerUrl || null,
           });
+          setShopSaved(true);
           if (data.heroBannerUrl) setBannerPreview(data.heroBannerUrl);
           updateSettings({ ...data, shopOwnerId: data.shopOwnerId });
         }
@@ -904,6 +915,7 @@ export default function Settings() {
       });
 
       if (response.data.success) {
+        setShopSaved(true);
         updateSettings(formData);
         setSnackbar({ open: true, message: response.data.message || 'Settings saved successfully!', severity: 'success' });
       } else {
