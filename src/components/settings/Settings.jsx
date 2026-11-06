@@ -547,13 +547,18 @@ export default function Settings() {
       setSnackbar({ open: true, message: 'Please add at least one shipping zone', severity: 'error' });
       return;
     }
+    // A shipping template belongs to a saved shop: during shop setup, save the shop form first, then the template.
     if (!shopSaved) {
-      setSnackbar({
-        open: true,
-        message: 'Save your Shop Information first (Shop Name, Description, Contact Email), then create the shipping template.',
-        severity: 'warning',
-      });
-      return;
+      if (!validateForm()) {
+        setSnackbar({
+          open: true,
+          message: 'Fill in Shop Name, Description and Contact Email in the shop form; the template is saved together with your shop.',
+          severity: 'warning',
+        });
+        return;
+      }
+      const shopSavedNow = await handleSave();
+      if (!shopSavedNow) return;
     }
 
     setIsSavingTemplate(true);
@@ -778,7 +783,7 @@ export default function Settings() {
             externalCheckoutUrl: data.externalCheckoutUrl || '',
             heroBannerUrl: data.heroBannerUrl || null,
           });
-          setShopSaved(true);
+          setShopSaved(!!(data.shopName && data.shopName.trim()));
           if (data.heroBannerUrl) setBannerPreview(data.heroBannerUrl);
           updateSettings({ ...data, shopOwnerId: data.shopOwnerId });
         }
@@ -884,7 +889,7 @@ export default function Settings() {
   const handleSave = async () => {
     if (!validateForm()) {
       setSnackbar({ open: true, message: 'Please fix the errors in the form before saving', severity: 'error' });
-      return;
+      return false;
     }
     setLoading(true);
     try {
@@ -918,12 +923,14 @@ export default function Settings() {
         setShopSaved(true);
         updateSettings(formData);
         setSnackbar({ open: true, message: response.data.message || 'Settings saved successfully!', severity: 'success' });
-      } else {
-        setSnackbar({ open: true, message: response.data.message || 'Failed to save settings', severity: 'error' });
+        return true;
       }
+      setSnackbar({ open: true, message: response.data.message || 'Failed to save settings', severity: 'error' });
+      return false;
     } catch (error) {
       console.error('Error saving settings:', error);
       setSnackbar({ open: true, message: error.response?.data?.message || 'An error occurred while saving settings', severity: 'error' });
+      return false;
     } finally {
       setLoading(false);
     }
