@@ -185,6 +185,7 @@ export default function Orders() {
 
   // Fetch orders
   const fetchOrders = useCallback(async () => {
+    if (!shopOwnerId) return; // wait for the signed-in member's shop id
     if (!shopOwnerId) return;
     setLoading(true);
     try {

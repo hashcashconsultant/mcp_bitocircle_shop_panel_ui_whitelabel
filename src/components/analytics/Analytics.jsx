@@ -69,6 +69,7 @@ export default function Analytics() {
   }, []);
 
   const fetchAnalyticsData = useCallback(async () => {
+    if (!shopOwnerId) return; // wait for the signed-in member's shop id
     if (!shopOwnerId) return;
     setLoading(true);
     setError(null);

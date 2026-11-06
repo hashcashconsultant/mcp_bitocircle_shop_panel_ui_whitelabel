@@ -328,7 +328,8 @@ function ProductDetail() {
   const productId = searchParams.get('productId');
   const shopCreatorId = searchParams.get('shopCreatorId') || searchParams.get('creatorId');
   const viewOnly = searchParams.get('viewOnly') === 'true';
-  const currentUserId = searchParams.get('userId') || '';
+  // The signed-in member (stored by the panel after sign-in) when the link carries no userId.
+  const currentUserId = searchParams.get('userId') || (typeof window !== 'undefined' ? localStorage.getItem('childUserId') : '') || '';
 
   // No signed-in user: send the visitor to the community sign-in page (never act as another user).
   useEffect(() => {

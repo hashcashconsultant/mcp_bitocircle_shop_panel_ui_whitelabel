@@ -334,7 +334,8 @@ function Shop() {
   const searchParams = useSearchParams();
 
   const shopCreatorId = searchParams.get('shopCreatorId') || searchParams.get('creatorId');
-  const currentUserId = searchParams.get('userId') || '';
+  // The signed-in member (stored by the panel after sign-in) when the link carries no userId.
+  const currentUserId = searchParams.get('userId') || (typeof window !== 'undefined' ? localStorage.getItem('childUserId') : '') || '';
   const viewOnly = searchParams.get('viewOnly') === 'true';
 
   // No signed-in user: send the visitor to the community sign-in page (never act as another user).

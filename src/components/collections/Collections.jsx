@@ -886,6 +886,7 @@ export default function Collections() {
 
   // Fetch Collections
   const fetchCollections = useCallback(async () => {
+    if (!shopOwnerId) return; // wait for the signed-in member's shop id
     if (!shopOwnerId) return;
     try {
       setIsLoading(true);
@@ -909,6 +910,7 @@ export default function Collections() {
 
   // Fetch Products
   const fetchProducts = useCallback(async () => {
+    if (!shopOwnerId) return; // wait for the signed-in member's shop id
     if (!shopOwnerId) return;
     try {
       setIsProductsLoading(true);
