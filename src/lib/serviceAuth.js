@@ -66,3 +66,37 @@ export function installServiceAuth() {
     return originalFetch(input, { ...init, headers });
   };
 }
+
+const ME_URL = `${SERVICES_ORIGIN}BitohubService/me`;
+
+const writeStorage = (key, value) => {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    /* storage blocked: the page still works for this visit */
+  }
+};
+
+/**
+ * Who is signed in on this site. The shop panel always works on the signed-in member's own shop, so it asks the
+ * community service (same sign-in, same site) for the member's userId and stores it as shopOwnerId before any page
+ * loads. Returns { userId } when signed in, { signedOut: true } when there is no valid sign-in, or {} when the
+ * check could not run (network); then the last stored id is kept.
+ */
+export async function resolveSignedInMember() {
+  const { token, uuid } = signIn();
+  if (!token || !uuid) return { signedOut: true };
+  try {
+    const response = await fetch(ME_URL, { headers: { Authorization: `Bearer ${token}`, uuid } });
+    if (response.status === 401 || response.status === 403) return { signedOut: true };
+    if (!response.ok) return {};
+    const body = await response.json();
+    const id = body && body.data && body.data.userId != null ? String(body.data.userId) : null;
+    if (!id) return { signedOut: true };
+    writeStorage('shopOwnerId', id);
+    writeStorage('childUserId', id);
+    return { userId: id };
+  } catch {
+    return {};
+  }
+}

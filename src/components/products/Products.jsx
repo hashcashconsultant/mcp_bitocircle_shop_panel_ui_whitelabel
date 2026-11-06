@@ -204,8 +204,8 @@ export default function Products() {
   
   // Get shopOwnerId from localStorage or context
   const shopOwnerId = typeof window !== 'undefined' 
-    ? localStorage.getItem('shopOwnerId') || '5' 
-    : '5';
+    ? localStorage.getItem('shopOwnerId') || ''
+    : '';
   
   // State
   const [products, setProducts] = useState([]);

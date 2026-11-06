@@ -213,7 +213,7 @@ function OrdersList() {
   const searchParams = useSearchParams();
   
   // Get URL params
-  const currentUserId = searchParams.get('userId') || localStorage.getItem('userId') || '';
+  const currentUserId = searchParams.get('userId') || localStorage.getItem('childUserId') || '';
 
   // No signed-in user: send the visitor to the community sign-in page (never act as another user).
   useEffect(() => {

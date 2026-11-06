@@ -1,7 +1,9 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback } from 'react';
-import { installServiceAuth } from '@/lib/serviceAuth';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import { installServiceAuth, resolveSignedInMember } from '@/lib/serviceAuth';
 
 // Send the member's sign-in with every MonetizeService / BrokerAdminApi call.
 installServiceAuth();
@@ -10,7 +12,32 @@ import { signInUrl } from '@/config/whitelabel';
 
 const AppContext = createContext(null);
 
+// Shopper pages (another member's shop, a product, my orders) open from links that carry the ids they need.
+const SHOPPER_PAGES = ['/shop', '/product', '/my-order'];
+
+const isShopperPage = () => {
+  const path = window.location.pathname.replace(/^\/merchandise/, '') || '/';
+  return SHOPPER_PAGES.some((page) => path === page || path.startsWith(`${page}/`));
+};
+
 export function AppProvider({ children }) {
+  // The panel always works on the signed-in member's own shop: learn who that is before any page loads its data.
+  const [memberReady, setMemberReady] = useState(false);
+  useEffect(() => {
+    let active = true;
+    resolveSignedInMember().then((member) => {
+      if (!active) return;
+      if (member.signedOut && !isShopperPage()) {
+        window.location.replace(signInUrl());
+        return;
+      }
+      setMemberReady(true);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const [activeTab, setActiveTab] = useState('dashboard');
   const [products, setProducts] = useState(mockProducts);
   const [orders, setOrders] = useState(mockOrders);
@@ -221,7 +248,17 @@ export function AppProvider({ children }) {
     setDateRange,
   };
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={value}>
+      {memberReady ? (
+        children
+      ) : (
+        <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <CircularProgress />
+        </Box>
+      )}
+    </AppContext.Provider>
+  );
 }
 
 export function useApp() {
