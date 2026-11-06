@@ -184,8 +184,14 @@ export default function Settings() {
     setIsLoadingBalance(true);
     try {
       const adminUser = localStorage.getItem('uuid');
-      const userUuid = localStorage.getItem('financeHubUuid');
-      if (!userUuid || userUuid === 'null' || userUuid === 'undefined') {
+      // Same as the BitoCircle wallet page: the wallet id is the member's exchange uuid from
+      // BitohubService users/getBitohubUserExchangeInfo (sign-in token is added by lib/serviceAuth).
+      const infoResponse = await axios.post(
+        'https://institutional-bo.paybito.com:8443/BitohubService/users/getBitohubUserExchangeInfo',
+        { adminUser }
+      );
+      const userUuid = infoResponse.data?.success ? infoResponse.data?.data?.uuid : null;
+      if (!userUuid) {
         setWalletMissing(true);
         setRealBalance(0);
         return;
@@ -198,7 +204,6 @@ export default function Settings() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'authorization': `bearer ${localStorage.getItem('access_token_us')}`
           },
           body: JSON.stringify({ adminUser, userUuid })
         }
