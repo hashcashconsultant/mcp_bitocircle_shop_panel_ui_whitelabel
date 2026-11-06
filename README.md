@@ -1,126 +1,89 @@
-# White-label
+# White-label Merchandise (Creator Shop Panel)
 
-This is the white-label copy of the Creator Shop Panel (sample brand **Circle**). It is served at
-`<your domain>/merchandise` (for example https://circle.paybito.com/merchandise), next to your
-white-label community app on the SAME domain.
+The shop panel for a white-label BitoCircle community. Creators on your community set up their shop, add
+physical and digital products, group them into collections, tag them on posts and reels, handle orders and
+shipping, and follow their sales. Members can browse a creator's shop, buy, and see their orders. All
+payments are in BitoDollars (B$). Shops, products and orders stay on your own community.
 
-- **Sign-in is shared.** The panel reads the community app's sign-in from localStorage on that domain
-  (`access_token_us`, `shopOwnerId`, `uuid`, `userId`, `financeHubUuid`, `brokerId`). When no shop or
-  user id is found, the visitor is sent to the community sign-in page (`/login`); the panel never falls
-  back to another user's id.
-- **Brand it in one place:** edit `src/config/whitelabel.js` (brand name, product name, description,
-  support email, community links, sign-in path, logo, font, main colours).
-- **Replace the images** in `public/img/`: `logo.png` (sidebar logo) and `favicon-96x96.png` (browser icon).
-- **Do not change the service URLs** (MonetizeService and BrokerAdminApi on institutional-bo.paybito.com,
-  the PayBito countries list and the PayBito support portal). The backend recognises your site from the
-  browser's Origin, so your shop data stays on your own platform.
-- **Deploy:** a normal Next.js build (`npm ci && npm run build`, then `npm start`, port 3055) with
-  `basePath: '/merchandise'` and `trailingSlash: true` (see `next.config.js`). Route `/merchandise`
-  on your domain to this app.
+It ships with the sample brand **Circle**, live at https://circle.paybito.com/merchandise.
 
----
+## How it fits with your community app
 
-# BitoCircle Creator Shop Panel
+- It is served from the same domain as your community app, under `/merchandise`
+  (for example `https://your-community.com/merchandise/`).
+- Members sign in on your community app. When the panel opens it reads that sign-in (the
+  `paybito_launch_platform_token` and `paybito_launch_platform_uuid` cookies), asks the service who is
+  signed in, and always opens **that member's own shop**. When nobody is signed in it opens your
+  community's `/login` page. Shop and product pages for buyers open from links that carry the shop.
+- All data comes from the PayBito services (MonetizeService, BitohubService, BrokerAdminApi on
+  `institutional-bo.paybito.com`). They recognise your community from the browser's Origin, so shops,
+  products and orders are kept per community. Your domain must be verified as a community domain.
+- A new shop is reviewed before its products go live: after the creator saves the shop details, products
+  can be added once the shop is approved.
 
-A comprehensive merchandise management dashboard for BitoCircle creators. Built with Next.js 14 and Material UI.
+## Make it yours
 
-## Features
+Everything brand-related is in one file: `src/config/whitelabel.js`.
 
-- **Dashboard**: Overview of shop status, daily metrics, pending orders, and quick actions
-- **Products**: Full product management with search, filters, and visibility toggles
-- **Collections**: Drag-and-drop collection ordering with visibility controls
-- **Orders**: Order management with fulfillment tracking and buyer communication
-- **Content & Tags**: Content performance tracking for tagged products
-- **Analytics**: KPIs, top products, traffic sources, and conversion funnel
-- **Settings**: Shop customization, payouts, shipping, and policy management
+| What | Where |
+|---|---|
+| Brand name, product name, description, support links | `src/config/whitelabel.js` |
+| Links back to your community and the sign-in path | `src/config/whitelabel.js` |
+| Font and main colors | `src/config/whitelabel.js` |
+| Logo and icon | replace `public/img/logo.png` and `public/img/favicon-96x96.png` |
 
-## Tech Stack
+Change the look, not the wiring: keep the service addresses as they are.
 
-- **Framework**: Next.js 14 (App Router)
-- **UI Library**: Material UI v5
-- **State Management**: React Context API
-- **Styling**: Material UI + Emotion
+## Run it
 
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── layout.jsx       # Root layout with theme provider
-│   └── page.jsx         # Main page component
-├── components/
-│   ├── analytics/       # Analytics section components
-│   ├── collections/     # Collections management components
-│   ├── common/          # Reusable UI components
-│   ├── content/         # Content & tags components
-│   ├── dashboard/       # Dashboard components
-│   ├── layout/          # Layout components (TopBar, Sidebar, MainLayout)
-│   ├── modals/          # All modal/dialog components
-│   ├── orders/          # Orders management components
-│   ├── products/        # Products management components
-│   └── settings/        # Settings components
-├── context/
-│   └── AppContext.js    # Global state management
-├── data/
-│   └── mockData.js      # Mock data for development
-├── hooks/               # Custom React hooks
-└── theme/
-    └── theme.js         # Material UI theme configuration
+```bash
+npm ci --legacy-peer-deps
+npm run dev                  # http://localhost:3055/merchandise/
+npx next build --webpack     # production build
+npm start                    # production server on port 3055
 ```
 
-## Getting Started
+For local work, sign in on your community app on the same host first, so the sign-in cookies are there.
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+## Deploy
 
-2. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
+The app is a Next.js server with `basePath: '/merchandise'` and `trailingSlash: true` (see `next.config.js`).
 
-3. **Open your browser:**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+1. Build as above and run it with `npm start` (port 3055).
+2. On your community domain, send **`/merchandise` and everything under it** to that server **with the full
+   path unchanged**. Do not strip the `/merchandise` prefix and do not redirect; the app's pages and its
+   `/merchandise/_next/...` files both need the prefix.
 
-## Available Scripts
+nginx example, next to your community app:
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
+```nginx
+location /merchandise {
+    proxy_pass http://127.0.0.1:3055;      # no trailing slash: the path is passed unchanged
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
 
-## Key Features
+Apache example:
 
-### BitoDollar Integration
-All shop payments are processed in BitoDollars (B$). Creators receive payments directly to their BitoDollar wallet.
+```apache
+ProxyPass        /merchandise http://127.0.0.1:3055/merchandise
+ProxyPassReverse /merchandise http://127.0.0.1:3055/merchandise
+```
 
-### Product Management
-- Physical and digital product support
-- Variant management (size, color, custom)
-- Inventory tracking with low stock alerts
-- Compare-at pricing for sales
+If you serve it from another path, change `basePath` in `next.config.js` and in `src/config/whitelabel.js`
+to the same value.
 
-### Order Fulfillment
-- Order timeline tracking
-- Shipping carrier integration
-- Buyer communication
-- Automatic payout release on delivery
+## What creators can do
 
-### Analytics
-- Real-time shop performance metrics
-- Conversion funnel visualization
-- Traffic source breakdown
-- Top product rankings
-
-## Customization
-
-### Theme
-The app uses a dark theme by default. Customize colors in `src/theme/theme.js`.
-
-### Mock Data
-Replace mock data in `src/data/mockData.js` with your API integration.
+- **Dashboard**: shop status, today's summary, orders that need action, quick actions
+- **Products**: physical and digital products, variants, stock, visibility
+- **Collections**: group and order products
+- **Orders**: fulfilment, shipping updates, refunds
+- **Content & Tags**: which posts and reels have products tagged and how they perform
+- **Analytics**: top products, traffic and conversion
+- **Settings**: shop details, look, shipping templates, payout wallet (B$)
 
 ## License
 
-Proprietary - BitoCircle / PayBito
+See `LICENSE`.
