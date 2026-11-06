@@ -23,23 +23,26 @@ export default function MetricCard({ label, value, change, isPositive }) {
         <Typography variant="h4" sx={{ fontWeight: 700, color: '#fff', mb: 0.5 }}>
           {value}
         </Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5,
-            color: isPositive ? '#22c55e' : '#ef4444',
-          }}
-        >
-          {isPositive ? (
-            <TrendingUpIcon sx={{ fontSize: 16 }} />
-          ) : (
-            <TrendingDownIcon sx={{ fontSize: 16 }} />
-          )}
-          <Typography variant="caption">
-            {isPositive ? '+' : '-'}{Math.abs(change)}%
-          </Typography>
-        </Box>
+        {/* Only when the service sends a change value (today's KPIs have none yet). */}
+        {Number.isFinite(Number(change)) && change !== null && change !== undefined && change !== '' && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+              color: isPositive ? '#22c55e' : '#ef4444',
+            }}
+          >
+            {isPositive ? (
+              <TrendingUpIcon sx={{ fontSize: 16 }} />
+            ) : (
+              <TrendingDownIcon sx={{ fontSize: 16 }} />
+            )}
+            <Typography variant="caption">
+              {isPositive ? '+' : '-'}{Math.abs(change)}%
+            </Typography>
+          </Box>
+        )}
       </CardContent>
     </Card>
   );
