@@ -97,6 +97,8 @@ export default function Settings() {
   // Balance state
   const [realBalance, setRealBalance] = useState(0);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
+  // No Finance Hub wallet on this account yet (empty financeHubUuid): show that instead of an error.
+  const [walletMissing, setWalletMissing] = useState(false);
 
   // Validation errors state
   const [errors, setErrors] = useState({});
@@ -183,6 +185,12 @@ export default function Settings() {
     try {
       const adminUser = localStorage.getItem('uuid');
       const userUuid = localStorage.getItem('financeHubUuid');
+      if (!userUuid || userUuid === 'null' || userUuid === 'undefined') {
+        setWalletMissing(true);
+        setRealBalance(0);
+        return;
+      }
+      setWalletMissing(false);
 
       const response = await fetch(
         `${BROKER_ADMIN_API}/finance-hub/getUserBalance`,
@@ -1118,7 +1126,12 @@ export default function Settings() {
                     <Box sx={{ textAlign: 'right' }}>
                       <Typography variant="caption" sx={{ color: 'text.secondary' }}>Balance</Typography>
                       {isLoadingBalance ? <Skeleton variant="text" width={120} height={40} /> : (
-                        <Typography variant="h5" sx={{ fontWeight: 700, color: '#22c55e' }}>B${formatBalance(realBalance)}</Typography>
+                        <>
+                          <Typography variant="h5" sx={{ fontWeight: 700, color: '#22c55e' }}>B${formatBalance(realBalance)}</Typography>
+                          {walletMissing && (
+                            <Typography variant="caption" sx={{ color: 'text.secondary' }}>Wallet not set up yet</Typography>
+                          )}
+                        </>
                       )}
                     </Box>
                   </Box>
