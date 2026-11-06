@@ -28,6 +28,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { StatusChip, FilterChips } from '@/components/common';
 import { useApp } from '@/context/AppContext';
+import { shopBlockedReason } from '@/lib/shopStatus';
 import ProductModal from '../modals/ProductModal';
 import DeleteConfirmDialog from '../modals/DeleteConfirmDialog';
 import { useRouter } from 'next/navigation';
@@ -286,16 +287,18 @@ export default function Products() {
       }
       
       if (validationResponse.data === false) {
+        // Saved shop waiting for PayBito approval: say so and stay here; otherwise finish the setup first.
+        if ((await shopBlockedReason(BASE_URL, shopOwnerId)) === 'review') {
+          showToast('Your shop is under review. You can add products once PayBito approves your shop.', 'info');
+          return false;
+        }
         showToast(
           'Please complete your shop setup before managing products. Redirecting to settings...',
           'warning'
         );
-        
-        // Short delay to show the toast message
         setTimeout(() => {
           router.push('/settings');
         }, 1500);
-        
         return false;
       }
       

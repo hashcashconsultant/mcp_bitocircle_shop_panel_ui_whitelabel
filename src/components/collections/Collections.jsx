@@ -58,6 +58,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useApp } from '@/context/AppContext';
+import { shopBlockedReason } from '@/lib/shopStatus';
 import { useRouter } from 'next/navigation';
 
 
@@ -858,18 +859,18 @@ export default function Collections() {
       }
       
       if (validationResponse.data === false) {
+        // Saved shop waiting for PayBito approval: say so and stay here; otherwise finish the setup first.
+        if ((await shopBlockedReason(API_BASE_URL, shopOwnerId)) === 'review') {
+          showToast('Your shop is under review. You can manage collections once PayBito approves your shop.', 'info');
+          return false;
+        }
         showToast(
           'Please complete your shop setup before managing collections. Redirecting to settings...',
           'warning'
         );
-        
-        // Short delay to show the toast message
         setTimeout(() => {
-          // window.location.href = '/merchandise/settings';
           router.push('/settings');
-
         }, 1500);
-        
         return false;
       }
       
