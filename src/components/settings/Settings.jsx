@@ -43,6 +43,7 @@ import {
   Checkbox,
 } from '@mui/material';
 import { useApp } from '@/context/AppContext';
+import { signedInUuid } from '@/lib/serviceAuth';
 import axios from 'axios';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -183,7 +184,8 @@ export default function Settings() {
   const fetchUserBalance = async () => {
     setIsLoadingBalance(true);
     try {
-      const adminUser = localStorage.getItem('uuid');
+      // The token's owner: BrokerAdminApi refuses an adminUser that is not the signed-in member.
+      const adminUser = signedInUuid();
       // Same as the BitoCircle wallet page: the wallet id is the member's exchange uuid from
       // BitohubService users/getBitohubUserExchangeInfo (sign-in token is added by lib/serviceAuth).
       const infoResponse = await axios.post(

@@ -73,6 +73,9 @@ export function installServiceAuth() {
   };
 }
 
+/** The signed-in member's uuid: the one the sign-in token belongs to (the stored uuid can be another account's). */
+export const signedInUuid = () => signIn().uuid;
+
 const ME_URL = `${SERVICES_ORIGIN}BitohubService/me`;
 
 const writeStorage = (key, value) => {
