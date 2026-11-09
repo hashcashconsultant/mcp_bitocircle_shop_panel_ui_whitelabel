@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   AppBar,
   Toolbar,
@@ -60,11 +61,12 @@ export default function TopBar() {
     }
   }, []);
 
-  // Fetch shop verification status
-  useEffect(() => {
-    const fetchVerificationStatus = async () => {
+  const pathname = usePathname();
+
+  // Fetch shop verification status. The top bar stays on screen while pages change, so this runs again on
+  // every page change (and after a review request); otherwise an approval made meanwhile is not shown.
+  const fetchVerificationStatus = useCallback(async () => {
       try {
-        setVerificationLoading(true);
         const storedShopOwnerId = shopOwnerId;
 
         const response = await axios.get(
@@ -85,12 +87,13 @@ export default function TopBar() {
       } finally {
         setVerificationLoading(false);
       }
-    };
+  }, [shopOwnerId]);
 
+  useEffect(() => {
     if (shopOwnerId) {
       fetchVerificationStatus();
     }
-  }, [shopOwnerId]);
+  }, [shopOwnerId, pathname, fetchVerificationStatus]);
 
   const handleOpenReviewModal = () => {
     setReviewModalOpen(true);
@@ -158,6 +161,7 @@ export default function TopBar() {
         setReviewModalOpen(false);
         setReviewData({ reviewType: 'initial', message: '' });
         setReviewErrors({});
+        fetchVerificationStatus();
       } else {
         showToast(response.data.message || 'Failed to submit review request', 'error');
       }
@@ -174,7 +178,7 @@ export default function TopBar() {
 
   const handleStatusClick = () => {
     if (isShopVerified) {
-      showToast('Shop approved and live. Last review: Nov 11, 2025', 'success');
+      showToast('Your shop is approved and live.', 'success');
     } else {
       showToast('Shop verification pending. Click "Request Review" to submit or appeal.', 'info');
     }
