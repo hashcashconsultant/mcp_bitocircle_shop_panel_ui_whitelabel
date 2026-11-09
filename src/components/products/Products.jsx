@@ -29,6 +29,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { StatusChip, FilterChips } from '@/components/common';
 import { useApp } from '@/context/AppContext';
 import { shopBlockedReason } from '@/lib/shopStatus';
+import WHITELABEL from '@/config/whitelabel';
 import ProductModal from '../modals/ProductModal';
 import DeleteConfirmDialog from '../modals/DeleteConfirmDialog';
 import { useRouter } from 'next/navigation';
@@ -456,7 +457,14 @@ export default function Products() {
 
   // View product
   const handleViewProduct = () => {
-    window.open(`/shop/product/${menuProduct.id}`, '_blank');
+    // The panel's own product page, as a buyer sees it (window.open is not basePath-aware, so add it here).
+    const params = new URLSearchParams({
+      productId: String(menuProduct.id),
+      shopCreatorId: String(shopOwnerId),
+      userId: String(shopOwnerId),
+      viewOnly: 'true',
+    });
+    window.open(`${WHITELABEL.basePath}/product/?${params.toString()}`, '_blank');
     handleMenuClose();
   };
 
