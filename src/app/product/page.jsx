@@ -481,7 +481,9 @@ function ProductDetail() {
         method: 'GET', headers: { 'Content-Type': 'application/json' },
       });
       const result = await response.json();
-      if (result.success && result.data) {
+      const hiddenFromBuyers = result.data && !viewOnly
+        && (result.data.isActive === false || result.data.isDeleted === true);
+      if (result.success && result.data && !hiddenFromBuyers) {
         const p = result.data;
         setProduct({
           productId: p.productId,
@@ -521,7 +523,7 @@ function ProductDetail() {
     } finally {
       setLoading(false);
     }
-  }, [productId, shopCreatorId]);
+  }, [productId, shopCreatorId, viewOnly]);
 
   // Fetch cart
   const fetchCart = useCallback(async () => {

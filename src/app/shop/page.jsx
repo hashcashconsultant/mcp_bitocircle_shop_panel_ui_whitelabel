@@ -477,7 +477,10 @@ function Shop() {
       });
       const result = await response.json();
       if (result.success && result.data) {
-        const transformedProducts = result.data.map(product => ({
+        const visibleProducts = result.data.filter(
+          (product) => product.isActive !== false && product.isDeleted !== true
+        );
+        const transformedProducts = visibleProducts.map(product => ({
           productId: product.productId,
           name: product.productName,
           description: product.description,
