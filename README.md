@@ -89,3 +89,4 @@ to the same value.
 See `LICENSE`.
 
 <!-- sync check 2026-11-12 -->
+<!-- sync check 2 -->
