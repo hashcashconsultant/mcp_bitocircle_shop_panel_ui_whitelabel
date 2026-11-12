@@ -145,12 +145,12 @@ const productApi = {
 const mapProductFromApi = (product) => {
   // Determine stock status
   let stockStatus = 'instock';
-  if (product.quantity === 0) {
+  if (product.inventoryType === 'UNLIMITED') {
+    stockStatus = 'unlimited';
+  } else if (product.quantity === 0) {
     stockStatus = 'outstock';
   } else if (product.quantity <= 10) {
     stockStatus = 'lowstock';
-  } else if (product.inventoryType === 'UNLIMITED') {
-    stockStatus = 'unlimited';
   }
 
   // Build variants display string from raw variants
