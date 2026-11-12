@@ -87,3 +87,5 @@ to the same value.
 ## License
 
 See `LICENSE`.
+
+<!-- sync check 2026-11-12 -->
