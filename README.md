@@ -92,3 +92,4 @@ See `LICENSE`.
 <!-- sync check 2 -->
 
 <!-- sync test 2026-11-13T12:28:55 -->
+<!-- sync test 2026-11-13T13:14:45 -->
